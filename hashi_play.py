@@ -6,7 +6,7 @@ from hashi import *
 import sector
 from ship import Ship
 
-display_text = True
+display_text = False
 #font=None
 font_size = 20
 
@@ -210,6 +210,7 @@ def main():
                         n = guess.nodes[x][y]
                         if n.type == ISLAND:
                             selected_node = n
+                            #Ship(selected_node)
                     except IndexError:
                         pass
                 else:
