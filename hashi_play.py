@@ -153,7 +153,7 @@ def main():
     '''
     pygame.display.set_caption('Wakusei no hashi')
     
-    sector.visible_sprites = pygame.sprite.OrderedUpdates()
+    sector.visible_sprites = pygame.sprite.LayeredUpdates()
 
     all = pygame.sprite.Group()
 

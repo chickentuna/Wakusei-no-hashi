@@ -270,14 +270,14 @@ class GuessGrid(object):
                 for pos in neighbours :
                     self.updateHappiness(pos)
 
-    '''
-    On screen up == node logic left
-    On screen down == node logic right
-    On screen left == node logic down
-    On screen right == node logic up
-
-    And then inverted x & y for nodes table
-    '''
+        '''
+        On screen up == node logic left
+        On screen down == node logic right
+        On screen left == node logic down
+        On screen right == node logic up
+    
+        And then inverted x & y for nodes table
+        '''
 
     def getNextIsland(self,x,y,h=0,v=0):
         #print 'looking for ('+str(x+h)+','+str(y+v)+')'
@@ -296,8 +296,8 @@ class GuessGrid(object):
 
     def checkTruth(self):
         for array in self.nodes:
-            for node in array:
-                if not node.checkTruth():
+            for node in [n for n in array if n.type == ISLAND]:
+                if node.happiness != Happy.yes:
                     return False
         return True
 
@@ -592,7 +592,9 @@ class GuessNode(object):
             self.flooded = False
             self.planet = Planet(self)
             self.bubble = Bubble(self)
-            
+    
+    def __repr__(self):
+        return str(self.x)+","+str(self.y)
 
     def checkTruth(self):
         if not self.up == self.node.up:
