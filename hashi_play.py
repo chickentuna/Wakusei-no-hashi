@@ -6,7 +6,7 @@ from hashi import *
 import sector
 from ship import Ship
 
-display_text = False
+display_text = True
 #font=None
 font_size = 20
 
@@ -20,8 +20,8 @@ BLUE = (0, 0, 255)
 selected_node = None
 
 #Display vars
-cell_size = 30
-grid_offset = (30,30)
+cell_size = 50
+grid_offset = (10,10)
 cell_offset = (9,7)
 cursor_radius = 10
 cursor_width = 1
@@ -142,8 +142,9 @@ def main():
     sector.font = pygame.font.Font(pygame.font.get_default_font(),font_size)
 
     # set up the window
-    WINDOWWIDTH = 400
-    WINDOWHEIGHT = 400
+    MINSIZE = size*cell_size
+    WINDOWWIDTH = MINSIZE+2*grid_offset[0]
+    WINDOWHEIGHT = MINSIZE+2*grid_offset[1]+60
     windowSurface = pygame.display.set_mode((WINDOWWIDTH, WINDOWHEIGHT), 0, 32)
     
     '''
@@ -202,8 +203,8 @@ def main():
             
             if event.type == MOUSEBUTTONDOWN:
                 mouse_x, mouse_y = pygame.mouse.get_pos()
-                x = mouse_x / cell_size - grid_offset[0] / cell_size
-                y = mouse_y / cell_size - grid_offset[1] / cell_size
+                x = (mouse_x - grid_offset[0]) / cell_size;
+                y = (mouse_y - grid_offset[1]) / cell_size;
                
                 if selected_node is None:
                     try :
@@ -245,18 +246,17 @@ def main():
         windowSurface.blit(bridgeSurface, (0,0))
 
         mouse_x, mouse_y = pygame.mouse.get_pos()
-        x = mouse_x / cell_size - grid_offset[0] / cell_size
-        y = mouse_y / cell_size - grid_offset[1] / cell_size
+        x = (mouse_x - grid_offset[0]) / cell_size;
+        y = (mouse_y - grid_offset[1]) / cell_size;
+               
         
-        #drawString(windowSurface, str((x,y)),(20, WINDOWHEIGHT-60))
+        drawString(windowSurface, str((x,y)),(20, WINDOWHEIGHT-60))
         
         all.update()
         sector.visible_sprites.draw(windowSurface)
         bridgeSurface = drawGrid(windowSurface, guess, bridgeSurface)
         pygame.display.update()
         mainClock.tick(40)
-    
-    
     
     if game_state == 'won':
         print 'Solution found'
