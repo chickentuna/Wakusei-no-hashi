@@ -32,14 +32,18 @@ class Ship(pygame.sprite.DirtySprite):
 		self.state = Ship.orbiting
 		self.image_init = self.images[0]
 		self.image = self.image_init
-		#self.add(self.container)
-		#self.add(sector.visible_sprites)
 		self.gravity_center = hashi_play.vectorAdd(hashi_play.grid_offset, hashi_play.cellCenter((node.y,node.x)))
 		self.rect = self.image.get_rect(center = self.gravity_center)
 		self.direction = random.randint(0,359)
 		self.theta = 0
 
-		
+
+	
+	def comeHome(self):
+		self.container.remove(self)
+		sector.visible_sprites.remove(self)
+		speed = 0
+
 	def update(self):
 		if self.state == Ship.orbiting:
 			self.theta = (self.theta + self.speed)%360

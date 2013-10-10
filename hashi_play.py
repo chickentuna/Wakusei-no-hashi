@@ -31,6 +31,7 @@ def cellCenter(pos):
 
 def vectorAdd(xs,ys):
     return tuple(x + y for x, y in zip(xs, ys))
+
 def vectorMult(xs,ys):
     if isinstance(xs, (int,float)):
         return tuple([y * xs for y in ys])
@@ -180,7 +181,7 @@ def main():
             if iteration>size**4:
                 break
     guess = GuessGrid(g)
-    Ship(guess.center)
+    #Ship(guess.center)
 
     running = True
     game_state = 'running'

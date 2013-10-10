@@ -1,6 +1,7 @@
 import random, sector, sys
 import inspect
 import hashi_play
+from ship import Ship
 from hashi_load import *
 
 WATER = 0
@@ -254,18 +255,13 @@ class GuessGrid(object):
             if node.flooded == False:
                 node.flooded = True
                 neighbours = []
-                #print "the node "+str((node.x,node.y))
                 if node.up > 0:
-                    #print "connects with up "#+ str((node.x,node.y+1)) 
                     neighbours += [self.getNextIsland(node.x, node.y,v=1)]
                 if node.down > 0:
-                    #print "connects with down "#+ str((node.x,node.y-1))
                     neighbours += [self.getNextIsland(node.x, node.y,v=-1)]
                 if node.left > 0:
-                    #print "connects with left "#+ str((node.x-1,node.y))
                     neighbours += [self.getNextIsland(node.x, node.y,h=-1)]
                 if node.right > 0:
-                    #print "connects with right "#+ str((node.x+1,node.y))
                     neighbours += [self.getNextIsland(node.x, node.y,h=1)]
                 for pos in neighbours :
                     self.updateHappiness(pos)
@@ -540,6 +536,7 @@ class Bubble(pygame.sprite.DirtySprite):
     def __init__(self, node):
         pygame.sprite.DirtySprite.__init__(self)
         self.node = node
+        self.ships = []
         self.images = self.images_happy
         self.image = self.images[0]
         self.frame = 0
@@ -556,10 +553,20 @@ class Bubble(pygame.sprite.DirtySprite):
             sector.visible_sprites.remove(self)
 
     def update(self):
-        if (self.node.happiness == Happy.yes or self.node.happiness == Happy.no) and self.visible == 0:
+
+        if (self.node.happiness == Happy.no) and self.visible == 0:
             self.show(1)
-        elif (self.node.happiness == Happy.neutral and self.visible == 1):
+            for ship in self.ships:
+                ship.comeHome();
+            self.ships = []
+        elif (self.node.happiness == Happy.yes) and self.visible == 0:
+            self.show(1)
+            self.ships.append(Ship(self.node))
+        elif (self.node.happiness == Happy.neutral) and self.visible == 1:
             self.show(0)
+            for ship in self.ships:
+                ship.comeHome();
+            self.ships = []
 
         if (self.images is self.images_happy):
             if (self.node.happiness != Happy.yes):
