@@ -27,7 +27,6 @@ class Ship(pygame.sprite.DirtySprite):
 	def __init__(self, node):
 		self.groups = self.container, sector.visible_sprites # assign groups BEFORE calling pygame.sprite.Sprite.__init__
 		pygame.sprite.DirtySprite.__init__(self,  self.groups) #call parent class. NEVER FORGET !
-		
 		self.start_node = node
 		self.state = Ship.orbiting
 		self.image_init = self.images[0]
@@ -40,15 +39,19 @@ class Ship(pygame.sprite.DirtySprite):
 
 	
 	def comeHome(self):
-		self.container.remove(self)
-		sector.visible_sprites.remove(self)
+		for group in self.groups:
+			if (group.has(self)):
+				group.remove(self)
 		speed = 0
 
 	def update(self):
+
 		if self.state == Ship.orbiting:
 			self.theta = (self.theta + self.speed)%360
 			depth = self.radius * cos(radians(self.theta))
 
+			if (not sector.visible_sprites.has(self)):
+				return
 			sector.visible_sprites.change_layer(self,-7)
 			coeff = hashi_play.cell_size/2
 			position = coeff*self.radius * sin(radians(self.theta))
@@ -66,3 +69,4 @@ class Ship(pygame.sprite.DirtySprite):
 			self.image, self.rect = hashi.rotozoom_center(self.image_init, self.rect, 0, scale);
 
 
+#TODO! :( to :) => no ship spawn

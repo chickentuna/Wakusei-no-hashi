@@ -552,16 +552,16 @@ class Bubble(pygame.sprite.DirtySprite):
         else:
             sector.visible_sprites.remove(self)
 
+    def spawnShips(self):
+        self.ships.append(Ship(self.node))
+
     def update(self):
 
-        if (self.node.happiness == Happy.no) and self.visible == 0:
+        if (self.node.happiness == Happy.no) and (self.visible == 0):
             self.show(1)
-            for ship in self.ships:
-                ship.comeHome();
-            self.ships = []
         elif (self.node.happiness == Happy.yes) and self.visible == 0:
             self.show(1)
-            self.ships.append(Ship(self.node))
+            #self.spawnShips()            
         elif (self.node.happiness == Happy.neutral) and self.visible == 1:
             self.show(0)
             for ship in self.ships:
@@ -571,7 +571,12 @@ class Bubble(pygame.sprite.DirtySprite):
         if (self.images is self.images_happy):
             if (self.node.happiness != Happy.yes):
                 self.images = self.images_sad
-        elif (self.node.happiness != Happy.no):
+                for ship in self.ships:
+                    ship.comeHome();
+                self.ships = []
+        elif (self.node.happiness != Happy.no and self.visible==1):
+                if self.images != self.images_happy:
+                    self.spawnShips()
                 self.images = self.images_happy
 
         if (self.visible == 1):
