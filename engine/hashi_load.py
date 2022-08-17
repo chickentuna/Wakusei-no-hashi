@@ -3,12 +3,11 @@ import random, os.path
 #import basic pygame modules
 import pygame
 from pygame.locals import *
+from hashi_play import main_dir
 
 #see if we can load more than standard BMP
 if not pygame.image.get_extended():
     raise SystemExit("Sorry, extended image module required")
-
-main_dir = os.path.split(os.path.abspath(__file__))[0]
 
 
 if main_dir[-4:] == '.exe':

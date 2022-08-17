@@ -1,8 +1,9 @@
-import random, sector, sys
+import engine.sector as sector
+import random, sys
 import inspect
 import hashi_play
-from ship import Ship
-from hashi_load import *
+from engine.ship import Ship
+from engine.hashi_load import *
 
 WATER = 0
 BRIDGE = 1
@@ -37,18 +38,30 @@ class Grid(object):
     def __str__(self):
         return "Grid ["+str(self.width)+","+str(self.height)+"]"
 
-    def saveToFile(self,fname):
-        f = open(fname+'.hashi', 'w')
+    def as_string(self, show_solution = False, show_start = False):
+        result = ''
         for x in range(0,self.width):
             for y in range(0,self.height):
+                if (show_start and x==self.cx and y==self.cy):
+                    result += 'X'
+                    continue
                 n = self.nodes[x][y]
-                if (n.type == WATER or n.type == BRIDGE):
-                    f.write('-')
+                if (n.type == WATER or n.type == BRIDGE and not show_solution):
+                    result += '-'
                 elif (n.type == ISLAND):
-                    f.write(str(n.getNum()))
-                #else:
-                #    f.write('*')
-            f.write('\n')
+                    result += str(n.getNum())
+                else:
+                    result += '*'
+                
+            result += '\n'
+        return result
+
+    def display(self):
+        print(self.as_string(True))
+
+    def saveToFile(self,fname):
+        f = open(fname+'.hashi', 'w')
+        f.write(self.as_string())
 
     def placeStartIsland(self):
         iteration = 0
@@ -276,7 +289,6 @@ class GuessGrid(object):
         '''
 
     def getNextIsland(self,x,y,h=0,v=0):
-        #print 'looking for ('+str(x+h)+','+str(y+v)+')'
         nx = x
         ny = y
         found = False
@@ -284,7 +296,6 @@ class GuessGrid(object):
         while not found:
             nx += h
             ny += v
-            #print 'polling ('+str(nx)+','+str(ny)+') of type'+str(self.nodes[ny][nx].type)
             n = self.nodes[ny][nx]
             if n.type == ISLAND:
                 return n
@@ -496,7 +507,6 @@ class GuessGrid(object):
 
 def rotozoom_center(image, rect, angle, scale=1):
         """rotate an image while keeping its center"""
-        #rot_image = pygame.transform.rotate(image, angle)
         rot_image = pygame.transform.rotozoom(image, angle, scale)
         rot_rect = rot_image.get_rect(center=rect.center)
         return rot_image,rot_rect
@@ -523,7 +533,7 @@ class Planet(pygame.sprite.DirtySprite):
 
     def update(self):
         self.frame += 1 * planet_speed
-        self.image,self.rect = rotozoom_center(self.image_init, self.rect, self.frame//self.slowliness, .2)
+        self.image,self.rect = rotozoom_center(self.image_init, self.rect, self.frame/self.slowliness, .2)
         #hashi_play.drawString(self.image, str(self.node.getNum()),hashi_play.cell_offset)
 
 

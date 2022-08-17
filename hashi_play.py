@@ -1,10 +1,12 @@
 import os.path
 import pygame, sys, random
 from pygame.locals import *
-sys.path.append(".")
-from hashi import *
-import sector
-from ship import Ship
+
+from engine.hashi import *
+import engine.sector as sector
+from engine.ship import Ship
+
+main_dir = os.path.split(os.path.abspath(__file__))[0]
 
 display_text = True
 #font=None
@@ -24,7 +26,7 @@ cell_size = 50
 grid_offset = (10,10)
 cell_offset = (9,7)
 cursor_radius = 10
-cursor_width = 1
+cursor_width = 2
 
 def cellCenter(pos):
     return tuple([pos[0]*cell_size+cell_size/2, pos[1]*cell_size+cell_size/2])
@@ -53,14 +55,17 @@ def drawGrid(surface, grid, bridgeSurface):
     for x in range(0,grid.width):
         for y in range(0,grid.height):
             n = grid.nodes[x][y]
-            #pygame.draw.rect(surface, RED, Rect(vectorAdd(grid_offset, [x*cell_size,y*cell_size]),(cell_size,cell_size)))
             if (n.type == ISLAND):
                 col = WHITE
                 if n.getNum() == (n.up+n.left+n.right+n.down):
                     col = RED
                 if n is grid.center:
                     col = GREEN
-                drawString(surface, str(n.getNum()),vectorAdd(grid_offset, vectorAdd(cell_offset, [x*cell_size, y*cell_size])),col)
+
+                pos = vectorAdd(grid_offset, vectorAdd(cell_offset, [x*cell_size, y*cell_size]))
+                rect = (pos[0], pos[1], 12, 18)
+                pygame.draw.rect(surface, BLACK, rect)
+                drawString(surface, str(n.getNum()),pos,col)
                 drawBridges(bridgeSurface, n)
 
             elif (n.type == BRIDGE):
@@ -181,7 +186,6 @@ def main():
             if iteration>size**4:
                 break
     guess = GuessGrid(g)
-    #Ship(guess.center)
 
     running = True
     game_state = 'running'
@@ -204,8 +208,8 @@ def main():
             
             if event.type == MOUSEBUTTONDOWN:
                 mouse_x, mouse_y = pygame.mouse.get_pos()
-                x = (mouse_x - grid_offset[0]) / cell_size;
-                y = (mouse_y - grid_offset[1]) / cell_size;
+                x = (mouse_x - grid_offset[0]) // cell_size;
+                y = (mouse_y - grid_offset[1]) // cell_size;
                
                 if selected_node is None:
                     try :
@@ -223,7 +227,6 @@ def main():
     
                     if (not n is None) and (n.type == ISLAND):
                         relation = guess.nodeRelations(n, selected_node)
-                        print relation
     
                         if relation == 'connectable':
                             guess.connectNodes(n, selected_node)
@@ -247,11 +250,11 @@ def main():
         windowSurface.blit(bridgeSurface, (0,0))
 
         mouse_x, mouse_y = pygame.mouse.get_pos()
-        x = (mouse_x - grid_offset[0]) / cell_size;
-        y = (mouse_y - grid_offset[1]) / cell_size;
+        x = (mouse_x - grid_offset[0]) // cell_size;
+        y = (mouse_y - grid_offset[1]) // cell_size;
                
         
-        drawString(windowSurface, str((x,y)),(20, WINDOWHEIGHT-60))
+        # drawString(windowSurface, str((x,y)),(20, WINDOWHEIGHT-60))
         
         all.update()
         sector.visible_sprites.draw(windowSurface)
@@ -260,9 +263,9 @@ def main():
         mainClock.tick(40)
     
     if game_state == 'won':
-        print 'Solution found'
+        print('Solution found')
     elif game_state == 'running':
-        print 'Invalid game state'
+        print('Invalid game state')
 
     running = True
     while running:

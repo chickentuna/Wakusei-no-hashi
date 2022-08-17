@@ -1,6 +1,8 @@
-import pygame, sector, random, hashi_play
+import pygame, random
+import engine.sector as sector
 from math import cos, sin, radians, ceil
-import hashi
+import hashi_play
+import engine.hashi as hashi
 
 #TODO: orbit algo : Make a circle function on a 2D plane then transform the result into orbit around 3D.
 
